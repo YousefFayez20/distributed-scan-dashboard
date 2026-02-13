@@ -22,4 +22,12 @@ public class WorkerServiceImp implements WorkerService{
         Optional<Worker> worker = getWorkerByName(name);
         worker.get().setLastSeen(Instant.now());
     }
+
+    @Override
+    public Worker createWorker(String name) {
+        Worker worker = new Worker();
+        worker.setName(name);
+        worker.setLastSeen(Instant.now());
+        return workerRepository.save(worker);
+    }
 }

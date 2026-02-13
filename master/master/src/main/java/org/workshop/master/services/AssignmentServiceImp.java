@@ -22,4 +22,13 @@ public class AssignmentServiceImp implements AssignmentService{
 
         return assignments;
     }
+
+    @Override
+    public void updateAssignmentStatus(Long id, AssignmentStatus assignmentStatus) {
+        Optional<Assignment> assignment = assignmentRepository.findById(id);
+        if(assignment.isPresent()){
+            assignment.get().setStatus(assignmentStatus);
+            assignmentRepository.save(assignment.get());
+        }
+    }
 }

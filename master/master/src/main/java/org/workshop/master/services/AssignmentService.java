@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface AssignmentService {
     public List<Assignment> getAssignmentsForWorker(String workerName, WorkerStatus workerStatus, AssignmentStatus assignmentStatus);
+    public void updateAssignmentStatus(Long id,AssignmentStatus assignmentStatus);
 }
