@@ -17,5 +17,6 @@ public class AssignmentResponse {
     private int[] ports;
     private int interval;
     private AssignmentStatus assignmentStatus;
+    private Long assignmentId;
 
 }

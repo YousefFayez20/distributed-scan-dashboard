@@ -8,13 +8,10 @@ import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class ResultsResponse {
-    private String workerName;
-    private String ip;
-    private int port;
-    private String status;
+public class SelectedWorkers {
+    List<String> workerNames;
 }

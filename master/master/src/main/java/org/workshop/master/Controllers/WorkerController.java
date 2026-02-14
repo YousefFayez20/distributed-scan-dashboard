@@ -2,7 +2,6 @@ package org.workshop.master.Controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.archive.scan.spi.ScanResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.workshop.master.Entity.*;
@@ -10,7 +9,7 @@ import org.workshop.master.ScanConfig;
 import org.workshop.master.Utility.IpUtility;
 import org.workshop.master.dto.AssignmentResponse;
 import org.workshop.master.dto.HeartbeatRequest;
-import org.workshop.master.dto.ResultsResponse;
+import org.workshop.master.dto.ResultsRequest;
 import org.workshop.master.services.AssignmentService;
 import org.workshop.master.services.ScanResultsService;
 import org.workshop.master.services.WorkerService;
@@ -49,6 +48,7 @@ public class WorkerController {
                 assignmentResponse.setPorts(ScanConfig.PORTS);
                 assignmentResponse.setInterval(ScanConfig.INTERVAL_IN_SECONDS);
                 assignmentResponse.setAssignmentStatus(AssignmentStatus.RUNNING);
+                assignmentResponse.setAssignmentId(assignments.get(0).getId());
                 //make this assignment running
                 assignmentService.updateAssignmentStatus(assignments.get(0).getId(),AssignmentStatus.RUNNING);
                 return ResponseEntity.ok().body(assignmentResponse);
@@ -64,10 +64,10 @@ public class WorkerController {
         }
     }
     @PostMapping("/results")
-    public ResponseEntity<?> getResults(@RequestBody ResultsResponse resultsResponse){
+    public ResponseEntity<?> getResults(@RequestBody ResultsRequest resultsRequest){
         //now we will to map the results response to Scan results
-        Worker worker = workerService.getWorkerByName(resultsResponse.getWorkerName()).orElseThrow(()-> new EntityNotFoundException());
-        List<ScanResults> entities = resultsResponse.getData().stream().map(resultItem ->
+        Worker worker = workerService.getWorkerByName(resultsRequest.getWorkerName()).orElseThrow(()-> new EntityNotFoundException());
+        List<ScanResults> entities = resultsRequest.getData().stream().map(resultItem ->
                 {
                     ScanResults scanResults = new ScanResults();
                     scanResults.setWorker(worker);

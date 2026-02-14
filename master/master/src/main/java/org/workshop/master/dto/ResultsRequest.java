@@ -1,6 +1,5 @@
 package org.workshop.master.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ResultsResponse {
+public class ResultsRequest {
     private String workerName;
-    private String ip;
-    private int port;
-    private String status;
+    private List<ResultItem> data;
+    private boolean isFinished;
 }

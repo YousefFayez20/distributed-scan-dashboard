@@ -3,10 +3,14 @@ package org.workshop.master.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.workshop.master.Entity.Worker;
+import org.workshop.master.dto.WorkerResponse;
 import org.workshop.master.repository.WorkerRepository;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class WorkerServiceImp implements WorkerService{
     public void updateTimestamp(String name) {
         Optional<Worker> worker = getWorkerByName(name);
         worker.get().setLastSeen(Instant.now());
+        workerRepository.save(worker.get());
     }
 
     @Override
@@ -29,5 +34,22 @@ public class WorkerServiceImp implements WorkerService{
         worker.setName(name);
         worker.setLastSeen(Instant.now());
         return workerRepository.save(worker);
+    }
+
+    @Override
+    public List<WorkerResponse> getActiveWorkers() {
+        List<WorkerResponse> workerResponseList = workerRepository.findAll().stream()
+                .map(worker -> {
+                    WorkerResponse workerResponse = new WorkerResponse();
+                    workerResponse.setWorkerStatus(worker.getWorkerStatus());
+                    workerResponse.setId(worker.getId());
+                    workerResponse.setLastSeen(worker.getLastSeen());
+                    workerResponse.setName(worker.getName());
+                    return workerResponse;
+                }).filter(workerResponse -> {
+                    return (Duration.between(Instant.now(),workerResponse.getLastSeen()).toMinutes()) < 4;
+                }
+                ).collect(Collectors.toList());
+        return workerResponseList;
     }
 }

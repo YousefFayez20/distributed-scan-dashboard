@@ -28,5 +28,6 @@ public class ScanResults {
     @JoinColumn(name = "assignment_id")
     private Assignment assignment;
     private Instant scannedAt;
+    private ScanStatus status;
 
 }
