@@ -1,23 +1,24 @@
 package org.workshop.master.Controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.boot.archive.scan.spi.ScanResult;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.workshop.master.Entity.Assignment;
-import org.workshop.master.Entity.AssignmentStatus;
-import org.workshop.master.Entity.Worker;
-import org.workshop.master.Entity.WorkerStatus;
+import org.springframework.web.bind.annotation.*;
+import org.workshop.master.Entity.*;
 import org.workshop.master.ScanConfig;
+import org.workshop.master.Utility.IpUtility;
 import org.workshop.master.dto.AssignmentResponse;
 import org.workshop.master.dto.HeartbeatRequest;
+import org.workshop.master.dto.ResultsResponse;
 import org.workshop.master.services.AssignmentService;
+import org.workshop.master.services.ScanResultsService;
 import org.workshop.master.services.WorkerService;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/worker")
@@ -25,7 +26,8 @@ import java.util.Optional;
 public class WorkerController {
     private final AssignmentService assignmentService;
     private final WorkerService workerService;
-    @GetMapping("/heartbeat")
+    private final ScanResultsService scanResultsService;
+    @PostMapping("/heartbeat")
     public ResponseEntity<?> getHeartbeat(@RequestBody HeartbeatRequest heartbeatRequest){
         //if worker exists, update timestamp and send pending asssignment if exists any
         //if doesn't exist add to workers table
@@ -51,15 +53,33 @@ public class WorkerController {
                 assignmentService.updateAssignmentStatus(assignments.get(0).getId(),AssignmentStatus.RUNNING);
                 return ResponseEntity.ok().body(assignmentResponse);
             }
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("worker has no pending assignments");
 
         }else{
             assignmentResponse.setAssignmentStatus(AssignmentStatus.NOT_EXIST);
             workerService.createWorker(heartbeatRequest.getWorkerName());
             //create worker and add it to database
             //respond with ok 200
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Worker added to database");
         }
+    }
+    @PostMapping("/results")
+    public ResponseEntity<?> getResults(@RequestBody ResultsResponse resultsResponse){
+        //now we will to map the results response to Scan results
+        Worker worker = workerService.getWorkerByName(resultsResponse.getWorkerName()).orElseThrow(()-> new EntityNotFoundException());
+        List<ScanResults> entities = resultsResponse.getData().stream().map(resultItem ->
+                {
+                    ScanResults scanResults = new ScanResults();
+                    scanResults.setWorker(worker);
+                    scanResults.setIp(IpUtility.ipToLong(resultItem.getIp()));
+                    scanResults.setPort(resultItem.getPort());
+                    scanResults.setScannedAt(Instant.now());
+                    return scanResults;
+
+                }
+                ).collect(Collectors.toList());
+        scanResultsService.saveScanResults(entities);
+        return ResponseEntity.ok("Results saved Successfully");
     }
 
 }
