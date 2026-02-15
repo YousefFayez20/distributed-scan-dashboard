@@ -51,13 +51,20 @@ public class WorkerController {
                 assignmentResponse.setAssignmentId(assignments.get(0).getId());
                 //make this assignment running
                 assignmentService.updateAssignmentStatus(assignments.get(0).getId(),AssignmentStatus.RUNNING);
+                workerService.updateWorkerStatus(worker.get(),WorkerStatus.BUSY);
+
                 return ResponseEntity.ok().body(assignmentResponse);
             }
             return ResponseEntity.ok("worker has no pending assignments");
 
         }else{
             assignmentResponse.setAssignmentStatus(AssignmentStatus.NOT_EXIST);
-            workerService.createWorker(heartbeatRequest.getWorkerName());
+
+           Worker worker1 = new Worker();
+           worker1.setWorkerStatus(WorkerStatus.IDLE);
+           worker1.setName(heartbeatRequest.getWorkerName());
+           worker1.setLastSeen(Instant.now());
+            workerService.createNewWorker(worker1);
             //create worker and add it to database
             //respond with ok 200
             return ResponseEntity.ok("Worker added to database");
@@ -74,10 +81,14 @@ public class WorkerController {
                     scanResults.setIp(IpUtility.ipToLong(resultItem.getIp()));
                     scanResults.setPort(resultItem.getPort());
                     scanResults.setScannedAt(Instant.now());
+                    scanResults.setAssignment(assignmentService.getAssignment(resultsRequest.getAssignmentId()));
                     return scanResults;
-
                 }
                 ).collect(Collectors.toList());
+        if(resultsRequest.isFinished()){
+            assignmentService.updateAssignmentStatus(resultsRequest.getAssignmentId(),AssignmentStatus.FINISHED);
+            workerService.updateWorkerStatus(worker,WorkerStatus.IDLE);
+        }
         scanResultsService.saveScanResults(entities);
         return ResponseEntity.ok("Results saved Successfully");
     }

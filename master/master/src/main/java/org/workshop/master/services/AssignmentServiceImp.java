@@ -52,9 +52,14 @@ public class AssignmentServiceImp implements AssignmentService{
                     .orElseThrow(()-> new EntityNotFoundException("No worker with this name")));
             assignment.setStatus(AssignmentStatus.PENDING);
             assignment.setStartIP(IpUtility.longToIp(startIP + i*chunkSize));
-            assignment.setEndIP(IpUtility.longToIp(Math.min(endIP,startIP + i*chunkSize*2)));
+            assignment.setEndIP(IpUtility.longToIp(Math.min(endIP,startIP + i*chunkSize +chunkSize-1)));
             assignmentRepository.save(assignment);
             i++;
         }
+    }
+
+    @Override
+    public Assignment getAssignment(Long assignmentId) {
+        return assignmentRepository.findById(assignmentId).orElseThrow(() -> new EntityNotFoundException("No assignment found"));
     }
 }

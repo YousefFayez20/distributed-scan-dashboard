@@ -13,4 +13,6 @@ public interface AssignmentService {
     public void updateAssignmentStatus(Long id,AssignmentStatus assignmentStatus);
 
     void startScan(SelectedWorkers selectedWorkers);
+
+    Assignment getAssignment(Long assignmentId);
 }

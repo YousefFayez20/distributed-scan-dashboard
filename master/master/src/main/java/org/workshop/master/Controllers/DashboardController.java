@@ -34,7 +34,7 @@ public class DashboardController {
     @PostMapping("/start")
     public ResponseEntity<?> startScan(@RequestBody SelectedWorkers selectedWorkers) {
         assignmentService.startScan(selectedWorkers);
-        return  ResponseEntity.ok().build();
+        return  ResponseEntity.ok("Starts scanning");
     }
     @GetMapping("/results")
     public List<ResultsResponse> getScanResults(){

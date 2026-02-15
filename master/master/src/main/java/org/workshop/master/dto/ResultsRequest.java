@@ -15,4 +15,5 @@ public class ResultsRequest {
     private String workerName;
     private List<ResultItem> data;
     private boolean isFinished;
+    private Long assignmentId;
 }

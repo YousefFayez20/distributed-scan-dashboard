@@ -17,4 +17,5 @@ public class ResultsResponse {
     private String ip;
     private int port;
     private String status;
+    private Long assignmentId;
 }

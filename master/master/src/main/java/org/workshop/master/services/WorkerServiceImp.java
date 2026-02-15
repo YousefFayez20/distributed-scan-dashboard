@@ -3,6 +3,7 @@ package org.workshop.master.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.workshop.master.Entity.Worker;
+import org.workshop.master.Entity.WorkerStatus;
 import org.workshop.master.dto.WorkerResponse;
 import org.workshop.master.repository.WorkerRepository;
 
@@ -47,9 +48,22 @@ public class WorkerServiceImp implements WorkerService{
                     workerResponse.setName(worker.getName());
                     return workerResponse;
                 }).filter(workerResponse -> {
-                    return (Duration.between(Instant.now(),workerResponse.getLastSeen()).toMinutes()) < 4;
+                    return (Duration.between(workerResponse.getLastSeen(),Instant.now()).toMinutes()) < 4;
                 }
                 ).collect(Collectors.toList());
         return workerResponseList;
     }
+
+    @Override
+    public Worker createNewWorker(Worker worker1) {
+        return workerRepository.save(worker1);
+    }
+
+    @Override
+    public Worker updateWorkerStatus(Worker worker, WorkerStatus workerStatus) {
+        worker.setWorkerStatus(workerStatus);
+        return workerRepository.save(worker);
+    }
+
+
 }
