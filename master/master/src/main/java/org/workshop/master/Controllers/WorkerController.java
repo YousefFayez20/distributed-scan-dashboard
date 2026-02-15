@@ -82,6 +82,7 @@ public class WorkerController {
                     scanResults.setPort(resultItem.getPort());
                     scanResults.setScannedAt(Instant.now());
                     scanResults.setAssignment(assignmentService.getAssignment(resultsRequest.getAssignmentId()));
+                    scanResults.setStatus(ScanStatus.valueOf(resultItem.getStatus()));
                     return scanResults;
                 }
                 ).collect(Collectors.toList());
