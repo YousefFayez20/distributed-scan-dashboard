@@ -28,6 +28,7 @@ export default function App() {
   // ─── Workers state ───
   const [workers, setWorkers] = useState([]);
   const [workersLoading, setWorkersLoading] = useState(true);
+
   const [workersError, setWorkersError] = useState(null);
   const [selected, setSelected] = useState(new Set());
 
@@ -281,7 +282,7 @@ export default function App() {
                         {r.status}
                       </span>
                     </td>
-                    <td>#{r.assignmentId}</td>
+                    <td>{r.assignmentId ? `#${r.assignmentId}` : '—'}</td>
                   </tr>
                 ))}
               </tbody>

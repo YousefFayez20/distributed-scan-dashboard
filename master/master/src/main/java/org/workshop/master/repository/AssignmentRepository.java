@@ -8,11 +8,13 @@ import org.workshop.master.Entity.WorkerStatus;
 import java.util.List;
 import java.util.Optional;
 
-public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
-    List<Assignment> findByWorker_NameAndWorker_WorkerStatusAndStatus
-            (
-                    String workerName,
-                    WorkerStatus workerStatus,
-                    AssignmentStatus assignmentStatus
-            );
+public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
+        List<Assignment> findByWorker_NameAndWorker_WorkerStatusAndStatus(
+                        String workerName,
+                        WorkerStatus workerStatus,
+                        AssignmentStatus assignmentStatus);
+
+        Optional<Assignment> findFirstByWorkerIsNullAndStatus(AssignmentStatus status);
+
+        boolean existsByStatusIn(List<AssignmentStatus> statuses);
 }

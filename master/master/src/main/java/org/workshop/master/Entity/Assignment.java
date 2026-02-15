@@ -18,7 +18,7 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "worker_id")
+    @JoinColumn(name = "worker_id",nullable = true)
     private Worker worker;
 
     private String startIP;
@@ -27,6 +27,5 @@ public class Assignment {
     private AssignmentStatus status;
     @OneToMany(mappedBy = "assignment")
     private List<ScanResults> scanResults;
-
 
 }

@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssignmentService {
-    public List<Assignment> getAssignmentsForWorker(String workerName, WorkerStatus workerStatus, AssignmentStatus assignmentStatus);
-    public void updateAssignmentStatus(Long id,AssignmentStatus assignmentStatus);
+    public List<Assignment> getAssignmentsForWorker(String workerName, WorkerStatus workerStatus,
+            AssignmentStatus assignmentStatus);
+
+    public void updateAssignmentStatus(Long id, AssignmentStatus assignmentStatus);
 
     void startScan(SelectedWorkers selectedWorkers);
 
     Assignment getAssignment(Long assignmentId);
+    public Optional<Assignment> getAvailableAssignment(String workerName);
 }
