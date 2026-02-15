@@ -17,9 +17,7 @@ A **distributed network port scanner** built with **Spring Boot 4.0.2** and **Ja
 - [Configuration](#configuration)
 - [Getting Started](#getting-started)
 - [Workflow](#workflow)
-
 ---
-
 ## Overview
 
 The Distributed Scan Dashboard is the central control plane for a distributed port scanning system. It:
